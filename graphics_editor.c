@@ -379,5 +379,144 @@ char read_char(char *prompt)
     scanf(" %c", &ch);   /* space before %c skips whitespace */
     return ch;
 }
+
+/* ──────────────────────────────────────────
+   MAIN
+   ────────────────────────────────────────── */
+ 
+int main(void)
+{
+    int choice, idx;
+    struct Object obj;
+ 
+    clear_grid();
+ 
+    while (1) {
+        print_menu();
+        scanf("%d", &choice);
+ 
+        switch (choice) {
+ 
+            /* ---- Add Rectangle ---- */
+            case 1:
+                obj.type   = SHAPE_RECT;
+                obj.x      = read_int("  Top-left x: ");
+                obj.y      = read_int("  Top-left y: ");
+                obj.w      = read_int("  Width: ");
+                obj.h      = read_int("  Height: ");
+                obj.ch     = read_char("  Character (* or _): ");
+                idx        = add_object(obj);
+                if (idx >= 0)
+                    printf("Rectangle added as object %d.\n", idx);
+                break;
+ 
+            /* ---- Add Circle ---- */
+            case 2:
+                obj.type   = SHAPE_CIRCLE;
+                obj.x      = read_int("  Centre x: ");
+                obj.y      = read_int("  Centre y: ");
+                obj.radius = read_int("  Radius: ");
+                obj.ch     = read_char("  Character (* or _): ");
+                idx        = add_object(obj);
+                if (idx >= 0)
+                    printf("Circle added as object %d.\n", idx);
+                break;
+ 
+            /* ---- Add Line ---- */
+            case 3:
+                obj.type = SHAPE_LINE;
+                obj.x    = read_int("  Start x: ");
+                obj.y    = read_int("  Start y: ");
+                obj.x2   = read_int("  End x: ");
+                obj.y2   = read_int("  End y: ");
+                obj.ch   = read_char("  Character (* or _): ");
+                idx      = add_object(obj);
+                if (idx >= 0)
+                    printf("Line added as object %d.\n", idx);
+                break;
+ 
+            /* ---- Add Triangle ---- */
+            case 4:
+                obj.type = SHAPE_TRIANGLE;
+                obj.x    = read_int("  Top-left x: ");
+                obj.y    = read_int("  Top-left y: ");
+                obj.w    = read_int("  Base width: ");
+                obj.h    = read_int("  Height: ");
+                obj.ch   = read_char("  Character (* or _): ");
+                idx      = add_object(obj);
+                if (idx >= 0)
+                    printf("Triangle added as object %d.\n", idx);
+                break;
+ 
+            /* ---- Delete Object ---- */
+            case 5:
+                list_objects();
+                idx = read_int("  Object index to delete: ");
+                delete_object(idx);
+                break;
+ 
+            /* ---- Modify Object ---- */
+            case 6:
+                list_objects();
+                idx = read_int("  Object index to modify: ");
+                if (idx < 0 || idx >= object_count || !objects[idx].active) {
+                    printf("Invalid index.\n");
+                    break;
+                }
+                printf("  Current type: %d (1=Rect 2=Circle 3=Line 4=Triangle)\n",
+                       objects[idx].type);
+                obj.type = objects[idx].type;  /* keep same type */
+ 
+                if (obj.type == SHAPE_RECT) {
+                    obj.x  = read_int("  New top-left x: ");
+                    obj.y  = read_int("  New top-left y: ");
+                    obj.w  = read_int("  New width: ");
+                    obj.h  = read_int("  New height: ");
+                    obj.ch = read_char("  New character: ");
+                } else if (obj.type == SHAPE_CIRCLE) {
+                    obj.x      = read_int("  New centre x: ");
+                    obj.y      = read_int("  New centre y: ");
+                    obj.radius = read_int("  New radius: ");
+                    obj.ch     = read_char("  New character: ");
+                } else if (obj.type == SHAPE_LINE) {
+                    obj.x  = read_int("  New start x: ");
+                    obj.y  = read_int("  New start y: ");
+                    obj.x2 = read_int("  New end x: ");
+                    obj.y2 = read_int("  New end y: ");
+                    obj.ch = read_char("  New character: ");
+                } else if (obj.type == SHAPE_TRIANGLE) {
+                    obj.x  = read_int("  New top-left x: ");
+                    obj.y  = read_int("  New top-left y: ");
+                    obj.w  = read_int("  New base width: ");
+                    obj.h  = read_int("  New height: ");
+                    obj.ch = read_char("  New character: ");
+                }
+                modify_object(idx, obj);
+                break;
+ 
+            /* ---- List Objects ---- */
+            case 7:
+                list_objects();
+                break;
+ 
+            /* ---- Display Picture ---- */
+            case 8:
+                display_picture();
+                break;
+ 
+            /* ---- Quit ---- */
+            case 9:
+                printf("Goodbye!\n");
+                return 0;
+ 
+            default:
+                printf("Invalid choice. Please enter 1-9.\n");
+        }
+    }
+ 
+    return 0;
+}
+ 
+
  
  
