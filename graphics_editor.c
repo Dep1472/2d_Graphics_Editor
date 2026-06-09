@@ -424,6 +424,11 @@ int main(void)
                 obj.radius = read_int("  Radius: ");
                 obj.ch     = read_char("  Character (* or _): ");
                 idx        = add_object(obj);
+                if (obj.radius<=0)
+                {
+                  printf("Invalid dimensions.\n");
+                  break;
+                }
                 if (idx >= 0)
                     printf("Circle added as object %d.\n", idx);
                 break;
@@ -437,6 +442,11 @@ int main(void)
                 obj.y2   = read_int("  End y: ");
                 obj.ch   = read_char("  Character (* or _): ");
                 idx      = add_object(obj);
+                if (obj.w <= 0 || obj.h <= 0)
+                {
+                  printf("Invalid dimensions.\n");
+                  break;
+                }
                 if (idx >= 0)
                     printf("Line added as object %d.\n", idx);
                 break;
@@ -450,6 +460,11 @@ int main(void)
                 obj.h    = read_int("  Height: ");
                 obj.ch   = read_char("  Character (* or _): ");
                 idx      = add_object(obj);
+                if (obj.w <= 0 || obj.h <= 0)
+                {
+                  printf("Invalid dimensions.\n");
+                  break;
+                }
                 if (idx >= 0)
                     printf("Triangle added as object %d.\n", idx);
                 break;
