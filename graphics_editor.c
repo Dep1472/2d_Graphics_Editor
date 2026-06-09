@@ -313,7 +313,7 @@ void list_objects(void)
 {
     int i, found;
     char *names[] = {"", "Rectangle", "Circle", "Line", "Triangle"};
- 
+    
     found = 0;
     printf("\n--- Object List ---\n");
     for (i = 0; i < object_count; i++) {
@@ -350,16 +350,22 @@ void list_objects(void)
 /* Print the main menu */
 void print_menu(void)
 {
-    printf("\n=== 2D ASCII Graphics Editor ===\n");
+    printf("\n");
+    printf("========================================\n");
+    printf("      2D ASCII GRAPHICS EDITOR\n");
+    printf("========================================\n");
     printf("1. Add Rectangle\n");
     printf("2. Add Circle\n");
     printf("3. Add Line\n");
     printf("4. Add Triangle\n");
+    printf("----------------------------------------\n");
     printf("5. Delete Object\n");
     printf("6. Modify Object\n");
     printf("7. List Objects\n");
     printf("8. Display Picture\n");
+    printf("----------------------------------------\n");
     printf("9. Quit\n");
+    printf("========================================\n");
     printf("Choice: ");
 }
  
