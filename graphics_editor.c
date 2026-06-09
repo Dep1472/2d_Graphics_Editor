@@ -363,8 +363,9 @@ void print_menu(void)
     printf("6. Modify Object\n");
     printf("7. List Objects\n");
     printf("8. Display Picture\n");
+    printf("9. Clear Picture\n");
     printf("----------------------------------------\n");
-    printf("9. Quit\n");
+    printf("10. Quit\n");
     printf("========================================\n");
     printf("Choice: ");
 }
@@ -385,6 +386,13 @@ char read_char(char *prompt)
     printf("%s", prompt);
     scanf(" %c", &ch);   /* space before %c skips whitespace */
     return ch;
+}
+
+/*Clears the grid for a fresh start*/
+void clear_picture(void)
+{
+    object_count = 0;
+    clear_grid();
 }
 
 /* ──────────────────────────────────────────
@@ -530,9 +538,12 @@ int main(void)
             case 8:
                 display_picture();
                 break;
- 
-            /* ---- Quit ---- */
+         
+            /* ---- Clear Picture ---- */
             case 9:
+                clear_picture();
+            /* ---- Quit ---- */
+            case 10:
                 printf("Goodbye!\n");
                 return 0;
  
