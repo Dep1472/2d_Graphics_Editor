@@ -407,6 +407,11 @@ int main(void)
                 obj.h      = read_int("  Height: ");
                 obj.ch     = read_char("  Character (* or _): ");
                 idx        = add_object(obj);
+                if (obj.w <= 0 || obj.h <= 0)
+                {
+                  printf("Invalid dimensions.\n");
+                  break;
+                }
                 if (idx >= 0)
                     printf("Rectangle added as object %d.\n", idx);
                 break;
