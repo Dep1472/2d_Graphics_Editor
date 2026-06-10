@@ -1,0 +1,356 @@
+Gen AI used: Claude (free)
+
+First prompt:-
+
+Generate a baseline skeleton code to create a 2D ACSII Graphics Editor that has the following features:-
+1. Functions to be able to draw a circle, rectangle and triangle 
+2. Ability to add, delete and modify objects from a canvas of set boundary
+3. Use only 2D arrays of characters to create the picture (specifically "*" and "_"
+4. Functions to be able to display the picture
+Make sure the skeletal code is scalable according to my own designs and is easy to understand 
+Make no mistakes
+
+Response:-
+
+
+#include <stdio.h>
+#include <math.h>
+#include <string.h>
+
+#define ROWS        20
+#define COLS        60
+#define MAX_OBJECTS 20
+#define BLANK       ' '
+
+/* Shape type identifiers */
+#define SHAPE_RECT     1
+#define SHAPE_CIRCLE   2
+#define SHAPE_TRIANGLE 3
+
+struct Object {
+    int  type;
+    int  x, y;
+    int  w, h;
+    int  r;
+    char ch;
+    int  active;
+};
+
+char          canvas[ROWS][COLS];   
+struct Object objects[MAX_OBJECTS]; 
+int           obj_count = 0;        
+
+void clear_canvas(void)
+{
+    int r, c;
+    for (r = 0; r < ROWS; r++)
+        for (c = 0; c < COLS; c++)
+            canvas[r][c] = BLANK;
+}
+
+
+void set_cell(int x, int y, char ch)
+{
+    if (x >= 0 && x < COLS && y >= 0 && y < ROWS)
+        canvas[y][x] = ch;
+}
+
+void display_picture(void)
+{
+    int r, c;
+
+    printf("+");
+    for (c = 0; c < COLS; c++) printf("-");
+    printf("+\n");
+
+    for (r = 0; r < ROWS; r++) {
+        printf("|");
+        for (c = 0; c < COLS; c++)
+            printf("%c", canvas[r][c]);
+        printf("|\n");
+    }
+
+    printf("+");
+    for (c = 0; c < COLS; c++) printf("-");
+    printf("+\n");
+}
+
+
+void draw_rectangle(int x, int y, int w, int h, char ch)
+{
+    int i, j;
+
+    for (i = 0; i < w; i++) {
+        set_cell(x + i, y,         ch);
+        set_cell(x + i, y + h - 1, ch);
+    }
+
+    for (j = 0; j < h; j++) {
+        set_cell(x,         y + j, ch);
+        set_cell(x + w - 1, y + j, ch);
+    }
+}
+
+void draw_circle(int cx, int cy, int r, char ch)
+{
+    int x, y;
+    double dx, dy, dist;
+
+    for (y = -r; y <= r; y++) {
+        for (x = -(r * 2); x <= (r * 2); x++) {
+            dx   = x / 2.0;
+            dy   = (double)y;
+            dist = sqrt(dx * dx + dy * dy);
+            if (fabs(dist - r) < 0.6)
+                set_cell(cx + x, cy + y, ch);
+        }
+    }
+}
+
+void draw_triangle(int x, int y, int w, int h, char ch)
+{
+    int row, half, apex, left, right, i;
+
+    apex = w / 2;  
+
+    for (row = 0; row < h; row++) {
+        half  = (int)round((double)row / (double)(h - 1) * apex);
+        left  = x + apex - half;
+        right = x + apex + half;
+
+        if (row == 0) {
+            set_cell(x + apex, y, ch);         
+        } else if (row == h - 1) {
+            for (i = left; i <= right; i++)     
+                set_cell(i, y + row, ch);
+        } else {
+            set_cell(left,  y + row, ch);      
+            set_cell(right, y + row, ch);     
+        }
+    }
+}
+
+
+void rebuild_canvas(void)
+{
+    int i;
+    clear_canvas();
+
+    for (i = 0; i < obj_count; i++) {
+        if (!objects[i].active) continue;
+
+        switch (objects[i].type) {
+            case SHAPE_RECT:
+                draw_rectangle(objects[i].x, objects[i].y,
+                               objects[i].w, objects[i].h,
+                               objects[i].ch);
+                break;
+
+            case SHAPE_CIRCLE:
+                draw_circle(objects[i].x, objects[i].y,
+                            objects[i].r, objects[i].ch);
+                break;
+
+            case SHAPE_TRIANGLE:
+                draw_triangle(objects[i].x, objects[i].y,
+                              objects[i].w, objects[i].h,
+                              objects[i].ch);
+                break;
+        }
+    }
+}
+
+
+int add_object(struct Object obj)
+{
+    if (obj_count >= MAX_OBJECTS) {
+        printf("Canvas is full — cannot add more objects.\n");
+        return -1;
+    }
+    obj.active          = 1;
+    objects[obj_count]  = obj;
+    obj_count++;
+    rebuild_canvas();
+    printf("Object added at index %d.\n", obj_count - 1);
+    return obj_count - 1;
+}
+
+void delete_object(int i)
+{
+    if (i < 0 || i >= obj_count || !objects[i].active) {
+        printf("Invalid index — nothing deleted.\n");
+        return;
+    }
+    objects[i].active = 0;
+    rebuild_canvas();
+    printf("Object %d deleted.\n", i);
+}
+
+void modify_object(int i, struct Object new_obj)
+{
+    if (i < 0 || i >= obj_count) {
+        printf("Invalid index — nothing modified.\n");
+        return;
+    }
+    new_obj.active = 1;
+    objects[i]     = new_obj;
+    rebuild_canvas();
+    printf("Object %d modified.\n", i);
+}
+
+
+void list_objects(void)
+{
+    int   i, found = 0;
+    char *names[] = { "", "Rectangle", "Circle", "Triangle" };
+
+    printf("\n--- Active Objects ---\n");
+    for (i = 0; i < obj_count; i++) {
+        if (!objects[i].active) continue;
+        found = 1;
+        printf("  [%d] %s  char='%c'",
+               i, names[objects[i].type], objects[i].ch);
+
+        if (objects[i].type == SHAPE_RECT || objects[i].type == SHAPE_TRIANGLE)
+            printf("  x=%d y=%d w=%d h=%d",
+                   objects[i].x, objects[i].y,
+                   objects[i].w, objects[i].h);
+        else
+            printf("  cx=%d cy=%d r=%d",
+                   objects[i].x, objects[i].y, objects[i].r);
+
+        printf("\n");
+    }
+    if (!found) printf("  (none)\n");
+    printf("----------------------\n\n");
+}
+
+int read_int(char *prompt)
+{
+    int v;
+    printf("%s", prompt);
+    scanf("%d", &v);
+    return v;
+}
+
+char read_char(char *prompt)
+{
+    char c;
+    printf("%s", prompt);
+    scanf(" %c", &c);   
+    return c;
+}
+
+void print_menu(void)
+{
+    printf("\n=== 2D ASCII Graphics Editor ===\n");
+    printf("  1. Add Rectangle\n");
+    printf("  2. Add Circle\n");
+    printf("  3. Add Triangle\n");
+    printf("  4. Delete Object\n");
+    printf("  5. Modify Object\n");
+    printf("  6. List Objects\n");
+    printf("  7. Display Picture\n");
+    printf("  8. Quit\n");
+    printf("Choice: ");
+}
+
+int main(void)
+{
+    int           choice, idx;
+    struct Object obj;
+
+    clear_canvas();
+
+    while (1) {
+        print_menu();
+        scanf("%d", &choice);
+
+        switch (choice) {
+
+            \case 1:
+                obj.type = SHAPE_RECT;
+                obj.x    = read_int("  Top-left x : ");
+                obj.y    = read_int("  Top-left y : ");
+                obj.w    = read_int("  Width      : ");
+                obj.h    = read_int("  Height     : ");
+                obj.ch   = read_char("  Char (* or _) : ");
+                add_object(obj);
+                break;
+
+            case 2:
+                obj.type = SHAPE_CIRCLE;
+                obj.x    = read_int("  Centre x : ");
+                obj.y    = read_int("  Centre y : ");
+                obj.r    = read_int("  Radius   : ");
+                obj.ch   = read_char("  Char (* or _) : ");
+                add_object(obj);
+                break;
+
+            case 3:
+                obj.type = SHAPE_TRIANGLE;
+                obj.x    = read_int("  Top-left x  : ");
+                obj.y    = read_int("  Top-left y  : ");
+                obj.w    = read_int("  Base width  : ");
+                obj.h    = read_int("  Height      : ");
+                obj.ch   = read_char("  Char (* or _) : ");
+                add_object(obj);
+                break;
+
+            case 4:
+                list_objects();
+                idx = read_int("  Index to delete : ");
+                delete_object(idx);
+                break;
+
+            case 5:
+                list_objects();
+                idx = read_int("  Index to modify : ");
+                if (idx < 0 || idx >= obj_count || !objects[idx].active) {
+                    printf("  Invalid index.\n");
+                    break;
+                }
+                obj.type = objects[idx].type;
+
+                if (obj.type == SHAPE_RECT) {
+                    obj.x  = read_int("  New x : ");
+                    obj.y  = read_int("  New y : ");
+                    obj.w  = read_int("  New w : ");
+                    obj.h  = read_int("  New h : ");
+                    obj.ch = read_char("  New char : ");
+                } else if (obj.type == SHAPE_CIRCLE) {
+                    obj.x  = read_int("  New cx : ");
+                    obj.y  = read_int("  New cy : ");
+                    obj.r  = read_int("  New r  : ");
+                    obj.ch = read_char("  New char : ");
+                } else if (obj.type == SHAPE_TRIANGLE) {
+                    obj.x  = read_int("  New x : ");
+                    obj.y  = read_int("  New y : ");
+                    obj.w  = read_int("  New w : ");
+                    obj.h  = read_int("  New h : ");
+                    obj.ch = read_char("  New char : ");
+                }
+                modify_object(idx, obj);
+                break;
+
+            case 6:
+                list_objects();
+                break;
+
+            case 7:
+                display_picture();
+                break;
+
+            case 8:
+                printf("Goodbye!\n");
+                return 0;
+
+            default:
+                printf("  Please enter a number between 1 and 8.\n");
+        }
+    }
+
+    return 0;
+}
+
+The rest of the code, including the comments were added by me.
