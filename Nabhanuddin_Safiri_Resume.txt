@@ -1,0 +1,58 @@
+================================================================
+                        NABHANUDDIN SAFIRI
+================================================================
+
+EDUCATION
+---------
+Reva University, Bangalore
+  Bachelor of Technology (B.Tech)
+  Enrolled : September 15, 2025
+
+ACHIEVEMENTS & AWARDS
+----------------------
+  - International Olympiad Medalist (Grade 10)
+      Represented and won a medal at the International level Olympiad,
+      competing against students from across the world.
+
+  - Zonal & National Olympiad Medalist (Grade 11 & Grade 12)
+      Qualified and achieved medals at both the Zonal and National
+      levels of competitive Olympiads across two consecutive years,
+      demonstrating consistent academic excellence.
+
+PROJECTS
+--------
+  2D ASCII Graphics Editor — C Programming
+      Designed and developed a 2D graphics editor from scratch using
+      the C programming language. The editor uses ASCII characters
+      ('*' and '_') stored in a 2D character array to render shapes
+      on a text-based canvas. Features include:
+        - Functions to draw a circle, rectangle, and triangle
+        - Ability to add, delete, and modify objects on the canvas
+        - A display function to render the full picture in the terminal
+        - A menu-driven interface for user interaction
+
+VOLUNTEERING & EXTRACURRICULAR ACTIVITIES
+------------------------------------------
+  Student Council — Volunteering Team, Reva University
+      Active member of the Student Council volunteering team,
+      contributing to the organisation and smooth execution of
+      university events and initiatives.
+
+  Convocation Ceremony
+      Volunteered in the planning and management of the university's
+      convocation ceremony, assisting with coordination, logistics,
+      and guest management.
+
+  TED Talk Management
+      Part of the volunteer team responsible for organising and
+      managing a TED Talk event, handling speaker coordination,
+      stage setup, and audience management.
+
+  Inter-College Fest
+      Volunteered at an inter-college cultural and technical fest,
+      supporting event operations, participant coordination, and
+      on-ground management across multiple activities.
+
+================================================================
+                     END OF RESUME
+================================================================
